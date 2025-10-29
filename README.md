@@ -1,2 +1,2 @@
 # SnakeRemake
-Remake of the orginal Nokia Snake game
+Remake of the original Nokia Snake game
