@@ -1,12 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-public class Snake : MonoBehaviour
+public class SnakeController : MonoBehaviour
 {
-    private Vector2Int gridMoveDirection;
+    public Vector2Int gridMoveDirection;
     private Vector2Int gridPosition;   
     private float gridMoveTimer;
-    private float gridMoveTimerMax;
+    public float gridMoveTimerMax;
     private float inputCooldownTime = 0.1f;
     private bool isCooldown = false;
 
@@ -14,17 +14,10 @@ public class Snake : MonoBehaviour
     private void Awake()
     {
         gridPosition = new Vector2Int(0,0);
-        gridMoveTimerMax = 0.5f;
+        gridMoveTimerMax = 0.2f;
         gridMoveTimer = gridMoveTimerMax;
         gridMoveDirection = new Vector2Int(1,0);
     }
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-  
     private void Update()
     {
         HandleInput();
@@ -39,9 +32,16 @@ public class Snake : MonoBehaviour
             gridPosition += gridMoveDirection;
             gridMoveTimer -= gridMoveTimerMax;
             transform.position = new Vector3(gridPosition.x, gridPosition.y);
+            transform.eulerAngles = new Vector3(0, 0, GetEulerAngleFromVector(gridMoveDirection));
         }
           
 
+    }
+    private float GetEulerAngleFromVector(Vector2Int dir)
+    {
+        float n = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
+        if (n < 0) n += 360;
+        return n;   
     }
 
     private void HandleInput()
