@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Snake : MonoBehaviour
@@ -6,7 +7,9 @@ public class Snake : MonoBehaviour
     private Vector2Int gridPosition;   
     private float gridMoveTimer;
     private float gridMoveTimerMax;
- 
+    private float inputCooldownTime = 0.1f;
+    private bool isCooldown = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
@@ -43,8 +46,9 @@ public class Snake : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Input.GetButtonDown("Vertical"))
+        if (Input.GetButtonDown("Vertical") && !isCooldown)
         {
+            StartCoroutine(InputCooldown());
 
             if (Input.GetAxis("Vertical") > 0)
             {
@@ -64,8 +68,9 @@ public class Snake : MonoBehaviour
             }
 
         }
-        if (Input.GetButtonDown("Horizontal"))
+        if (Input.GetButtonDown("Horizontal") && !isCooldown)
         {
+            StartCoroutine(InputCooldown());
             if (Input.GetAxis("Horizontal") > 0)
             {
                 if (gridMoveDirection.x != -1)
@@ -86,5 +91,11 @@ public class Snake : MonoBehaviour
         }
 
     }
-        
+    private IEnumerator InputCooldown()
+    {
+        isCooldown = true;
+        yield return new WaitForSeconds(inputCooldownTime);
+        isCooldown = false;
+    }
+
 }
