@@ -1,22 +1,33 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SnakeController : MonoBehaviour
 {
-    public Vector2Int gridMoveDirection;
+    private Vector2Int gridMoveDirection;
     private Vector2Int gridPosition;   
     private float gridMoveTimer;
-    public float gridMoveTimerMax;
-    private float inputCooldownTime = 0.1f;
+    private float gridMoveTimerMax;
+    private float inputCooldownTime;
     private bool isCooldown = false;
+    private List<Transform> segments;
+    public int initialSnakeSize;
+    public Transform snakeBodyPrefab; 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
+        inputCooldownTime = 0.1f;
         gridPosition = new Vector2Int(0,0);
         gridMoveTimerMax = 0.2f;
         gridMoveTimer = gridMoveTimerMax;
         gridMoveDirection = new Vector2Int(1,0);
+    }
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void Start()
+    {
+        segments = new List<Transform>();
+        segments.Add(transform);
+        HandleInitialSize();
     }
     private void Update()
     {
@@ -26,22 +37,24 @@ public class SnakeController : MonoBehaviour
 
     private void HandleGridMovement()
     {
+        
         gridMoveTimer += Time.deltaTime;
         if (gridMoveTimer >= gridMoveTimerMax)
-        {     
+        {
+            HandleSegmentMovement();
             gridPosition += gridMoveDirection;
             gridMoveTimer -= gridMoveTimerMax;
-            transform.position = new Vector3(gridPosition.x, gridPosition.y);
-            transform.eulerAngles = new Vector3(0, 0, GetEulerAngleFromVector(gridMoveDirection));
+            transform.position = new Vector3Int(gridPosition.x, gridPosition.y);
         }
-          
 
     }
-    private float GetEulerAngleFromVector(Vector2Int dir)
+
+    private void HandleInitialSize()
     {
-        float n = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
-        if (n < 0) n += 360;
-        return n;   
+        for (int i = 1; i < initialSnakeSize; i++)
+        {
+            segments.Add(Instantiate(snakeBodyPrefab));
+        }
     }
 
     private void HandleInput()
@@ -96,6 +109,37 @@ public class SnakeController : MonoBehaviour
         isCooldown = true;
         yield return new WaitForSeconds(inputCooldownTime);
         isCooldown = false;
+    }
+
+    private void Grow()
+    {
+        Transform segment = Instantiate(snakeBodyPrefab);
+        segment.position = segments[segments.Count - 1].position;
+        segments.Add(segment);
+    }
+
+    private void Shrink()
+    {
+        if (segments.Count > 1)
+        {
+            Transform segment = segments[segments.Count - 1];
+            segments.Remove(segment);
+            Destroy(segment.gameObject);
+        }
+    }
+    private void HandleSegmentMovement()
+    {
+        for (int i = segments.Count - 1; i > 0; i--)
+        {
+            segments[i].position = segments[i - 1].position;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.GetComponent<FoodRandomizer>() != null)
+        {
+            Grow();
+        }
     }
 
 }
