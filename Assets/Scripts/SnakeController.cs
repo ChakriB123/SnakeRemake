@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class SnakeController : MonoBehaviour
@@ -22,7 +23,6 @@ public class SnakeController : MonoBehaviour
         gridMoveTimer = gridMoveTimerMax;
         gridMoveDirection = new Vector2Int(1,0);
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
         segments = new List<Transform>();
@@ -49,6 +49,7 @@ public class SnakeController : MonoBehaviour
 
     }
 
+    // To set the inital snakebody size
     private void HandleInitialSize()
     {
         for (int i = 1; i < initialSnakeSize; i++)
@@ -57,6 +58,7 @@ public class SnakeController : MonoBehaviour
         }
     }
 
+    // For handling Player input
     private void HandleInput()
     {
         if (Input.GetButtonDown("Vertical") && !isCooldown)
@@ -104,6 +106,8 @@ public class SnakeController : MonoBehaviour
         }
 
     }
+
+    // Input cooldown to avoid Irregular Movement
     private IEnumerator InputCooldown()
     {
         isCooldown = true;
@@ -111,22 +115,32 @@ public class SnakeController : MonoBehaviour
         isCooldown = false;
     }
 
-    private void Grow()
+    //Growth by Eating Mass Gainer
+    public void Grow(int Size)
     {
-        Transform segment = Instantiate(snakeBodyPrefab);
-        segment.position = segments[segments.Count - 1].position;
-        segments.Add(segment);
-    }
-
-    private void Shrink()
-    {
-        if (segments.Count > 1)
+        for (int i = 0; i < Size; i++)
         {
-            Transform segment = segments[segments.Count - 1];
-            segments.Remove(segment);
-            Destroy(segment.gameObject);
+            Transform segment = Instantiate(snakeBodyPrefab);
+            segment.position = segments[segments.Count - 1].position;
+            segments.Add(segment);
         }
     }
+
+    //Shrink by Eating Mass Burner
+    public void Shrink(int Size)
+    {
+        if (segments.Count > Size)
+        {
+            for (int i = 0; i < Size; i++)
+            {
+                Transform segment = segments[segments.Count - 1];
+                segments.Remove(segment);
+                Destroy(segment.gameObject);
+            }
+        }
+    }
+
+    //Each segment follows the pervious segment vice vasa
     private void HandleSegmentMovement()
     {
         for (int i = segments.Count - 1; i > 0; i--)
@@ -134,12 +148,6 @@ public class SnakeController : MonoBehaviour
             segments[i].position = segments[i - 1].position;
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.GetComponent<FoodRandomizer>() != null)
-        {
-            Grow();
-        }
-    }
+    
 
 }
