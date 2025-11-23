@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
-
 public class SnakeController : MonoBehaviour
 {
     private Vector2Int gridMoveDirection;
@@ -12,11 +11,17 @@ public class SnakeController : MonoBehaviour
     private float inputCooldownTime;
     private bool isCooldown = false;
     private List<Transform> segments;
+    private Bounds bounds;
     public int initialSnakeSize;
-    public Transform snakeBodyPrefab; 
+    public BoxCollider2D gridArea;
+    public Transform snakeBodyPrefab;
+
+    [Header("CO-OP Settings")]
+    public bool isPlayer1;
 
     private void Awake()
     {
+        bounds = gridArea.bounds;
         inputCooldownTime = 0.1f;
         gridPosition = new Vector2Int(0,0);
         gridMoveTimerMax = 0.2f;
@@ -37,16 +42,46 @@ public class SnakeController : MonoBehaviour
 
     private void HandleGridMovement()
     {
-        
         gridMoveTimer += Time.deltaTime;
         if (gridMoveTimer >= gridMoveTimerMax)
         {
             HandleSegmentMovement();
             gridPosition += gridMoveDirection;
-            gridMoveTimer -= gridMoveTimerMax;
+            gridPosition = HandleWrapping(gridPosition);
             transform.position = new Vector3Int(gridPosition.x, gridPosition.y);
+            gridMoveTimer -= gridMoveTimerMax;
+
+
+        }
+        
+
+    }
+    private Vector2Int HandleWrapping(Vector2Int gridPosition)
+    {
+
+        if (gridPosition.x < (int)bounds.min.x)
+        {
+            gridPosition.x = (int)bounds.max.x;
+
+        }
+        if (gridPosition.x > (int)bounds.max.x)
+        {
+            gridPosition.x = (int)bounds.min.x;
+
+        }
+        if (gridPosition.y < (int)bounds.min.y)
+        {
+            gridPosition.y = (int)bounds.max.x;
+
+        }
+        if (gridPosition.y > (int)bounds.max.y)
+        {
+            gridPosition.y = (int)bounds.min.y;
+
         }
 
+
+        return gridPosition;
     }
 
     // To set the inital snakebody size
@@ -58,53 +93,74 @@ public class SnakeController : MonoBehaviour
         }
     }
 
-    // For handling Player input
+    // For handling Player inputs for both single and Co-op
     private void HandleInput()
     {
-        if (Input.GetButtonDown("Vertical") && !isCooldown)
+        if (isPlayer1)
         {
-            StartCoroutine(InputCooldown());
-
-            if (Input.GetAxis("Vertical") > 0)
+            if (!isCooldown)
             {
-                if (gridMoveDirection.y != -1)
+                if (Input.GetKeyDown(KeyCode.W) && gridMoveDirection != Vector2Int.down)
                 {
-                    gridMoveDirection.x = 0;
-                    gridMoveDirection.y = 1;
+                    StartCoroutine(InputCooldown());
+                    gridMoveDirection = Vector2Int.up;
+                    
                 }
-            }
-            else if (Input.GetAxis("Vertical") < 0)
-            {
-                if (gridMoveDirection.y != 1)
+                 if (Input.GetKeyDown(KeyCode.S) && gridMoveDirection != Vector2Int.up)
                 {
-                    gridMoveDirection.x = 0;
-                    gridMoveDirection.y = -1;
+                    StartCoroutine(InputCooldown());
+                    gridMoveDirection = Vector2Int.down;
+                    
                 }
-            }
 
+                 if(Input.GetKeyDown(KeyCode.D) && gridMoveDirection != Vector2Int.left)
+                {
+                    StartCoroutine(InputCooldown());
+                    gridMoveDirection = Vector2Int.right;
+                    
+                }
+                 if (Input.GetKeyDown(KeyCode.A) && gridMoveDirection != Vector2Int.right)
+                {
+                    StartCoroutine(InputCooldown());
+                    gridMoveDirection = Vector2Int.left;
+   
+                }
+
+            }
         }
-        if (Input.GetButtonDown("Horizontal") && !isCooldown)
-        {
-            StartCoroutine(InputCooldown());
-            if (Input.GetAxis("Horizontal") > 0)
-            {
-                if (gridMoveDirection.x != -1)
-                {
-                    gridMoveDirection.x = 1;
-                    gridMoveDirection.y = 0;
-                }
-            }
-            else if (Input.GetAxis("Horizontal") < 0)
-            {
-                if (gridMoveDirection.x != 1)
-                {
-                    gridMoveDirection.x = -1;
-                    gridMoveDirection.y = 0;
-                }
-            }
+        else {
 
+
+            if (!isCooldown)
+            {
+                if (Input.GetKeyDown(KeyCode.UpArrow) && gridMoveDirection != Vector2Int.down)
+                {
+                    StartCoroutine(InputCooldown());
+                    gridMoveDirection = Vector2Int.up;
+
+                }
+                 if (Input.GetKeyDown(KeyCode.DownArrow) && gridMoveDirection != Vector2Int.up)
+                {
+                    StartCoroutine(InputCooldown());
+                    gridMoveDirection = Vector2Int.down;
+
+                }
+
+                 if(Input.GetKeyDown(KeyCode.RightArrow) && gridMoveDirection != Vector2Int.left)
+                {
+                    StartCoroutine(InputCooldown());
+                    gridMoveDirection = Vector2Int.right;
+
+                }
+                 if (Input.GetKeyDown(KeyCode.LeftArrow) && gridMoveDirection != Vector2Int.right)
+                {
+                    StartCoroutine(InputCooldown());
+                    gridMoveDirection = Vector2Int.left;
+
+                }
+
+            }
         }
-
     }
 
     // Input cooldown to avoid Irregular Movement
