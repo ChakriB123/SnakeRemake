@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
+using TMPro;
 public class SnakeController : MonoBehaviour
 {
     private Vector2Int gridMoveDirection;
@@ -9,22 +10,34 @@ public class SnakeController : MonoBehaviour
     private float gridMoveTimer;
     private float gridMoveTimerMax;
     private float inputCooldownTime;
-    private bool isCooldown = false;
-    private List<Transform> segments;
-    private Bounds bounds;
-    public int initialSnakeSize;
     public BoxCollider2D gridArea;
+    private Bounds bounds;
+    private bool isCooldown = false;
+
+
+    private List<Transform> segments;
+    public int initialSnakeSize;
     public Transform snakeBodyPrefab;
+    [SerializeField]private float shrinklimit = 3;
+
+    public ScoreController scoreController;
+
+
+    public float speedMultiplier { get; set; }
+    public int scoreMultiplier { get; set; }
+    public bool isShield { get; set; }
 
     [Header("CO-OP Settings")]
-    public bool isPlayer1;
+    [SerializeField]private PlayerType player;
 
+   
     private void Awake()
     {
+        SnakeDefault();
         bounds = gridArea.bounds;
-        inputCooldownTime = 0.1f;
+        inputCooldownTime = 0.08f;
         gridPosition = new Vector2Int(0,0);
-        gridMoveTimerMax = 0.2f;
+        gridMoveTimerMax = 0.1f;
         gridMoveTimer = gridMoveTimerMax;
         gridMoveDirection = new Vector2Int(1,0);
     }
@@ -40,21 +53,19 @@ public class SnakeController : MonoBehaviour
         HandleGridMovement();
     }
 
+  
     private void HandleGridMovement()
     {
-        gridMoveTimer += Time.deltaTime;
+        // Move snake based on timer
+        gridMoveTimer += Time.deltaTime * speedMultiplier;
         if (gridMoveTimer >= gridMoveTimerMax)
         {
             HandleSegmentMovement();
             gridPosition += gridMoveDirection;
             gridPosition = HandleWrapping(gridPosition);
             transform.position = new Vector3Int(gridPosition.x, gridPosition.y);
-            gridMoveTimer -= gridMoveTimerMax;
-
-
+            gridMoveTimer = 0;
         }
-        
-
     }
     private Vector2Int HandleWrapping(Vector2Int gridPosition)
     {
@@ -89,14 +100,18 @@ public class SnakeController : MonoBehaviour
     {
         for (int i = 1; i < initialSnakeSize; i++)
         {
-            segments.Add(Instantiate(snakeBodyPrefab));
+            Vector3 initalPosition = new Vector3(transform.position.x - i, transform.position.y);
+            segments.Add(Instantiate(snakeBodyPrefab, initalPosition, Quaternion.identity));
+           
         }
     }
 
     // For handling Player inputs for both single and Co-op
     private void HandleInput()
     {
-        if (isPlayer1)
+
+        // Input Handling for player 1
+        if (player == PlayerType.Player1)
         {
             if (!isCooldown)
             {
@@ -106,30 +121,30 @@ public class SnakeController : MonoBehaviour
                     gridMoveDirection = Vector2Int.up;
                     
                 }
-                 if (Input.GetKeyDown(KeyCode.S) && gridMoveDirection != Vector2Int.up)
+                else if (Input.GetKeyDown(KeyCode.S) && gridMoveDirection != Vector2Int.up)
                 {
                     StartCoroutine(InputCooldown());
                     gridMoveDirection = Vector2Int.down;
                     
                 }
 
-                 if(Input.GetKeyDown(KeyCode.D) && gridMoveDirection != Vector2Int.left)
+                else if (Input.GetKeyDown(KeyCode.D) && gridMoveDirection != Vector2Int.left)
                 {
                     StartCoroutine(InputCooldown());
                     gridMoveDirection = Vector2Int.right;
-                    
+
                 }
-                 if (Input.GetKeyDown(KeyCode.A) && gridMoveDirection != Vector2Int.right)
+                else if (Input.GetKeyDown(KeyCode.A) && gridMoveDirection != Vector2Int.right)
                 {
                     StartCoroutine(InputCooldown());
                     gridMoveDirection = Vector2Int.left;
-   
+
                 }
 
             }
         }
-        else {
-
+        // Input Handling for player 2
+        if (player == PlayerType.Player2) {
 
             if (!isCooldown)
             {
@@ -139,20 +154,20 @@ public class SnakeController : MonoBehaviour
                     gridMoveDirection = Vector2Int.up;
 
                 }
-                 if (Input.GetKeyDown(KeyCode.DownArrow) && gridMoveDirection != Vector2Int.up)
+                else if (Input.GetKeyDown(KeyCode.DownArrow) && gridMoveDirection != Vector2Int.up)
                 {
                     StartCoroutine(InputCooldown());
                     gridMoveDirection = Vector2Int.down;
 
                 }
 
-                 if(Input.GetKeyDown(KeyCode.RightArrow) && gridMoveDirection != Vector2Int.left)
+                else if (Input.GetKeyDown(KeyCode.RightArrow) && gridMoveDirection != Vector2Int.left)
                 {
                     StartCoroutine(InputCooldown());
                     gridMoveDirection = Vector2Int.right;
 
                 }
-                 if (Input.GetKeyDown(KeyCode.LeftArrow) && gridMoveDirection != Vector2Int.right)
+                else if (Input.GetKeyDown(KeyCode.LeftArrow) && gridMoveDirection != Vector2Int.right)
                 {
                     StartCoroutine(InputCooldown());
                     gridMoveDirection = Vector2Int.left;
@@ -162,6 +177,7 @@ public class SnakeController : MonoBehaviour
             }
         }
     }
+ 
 
     // Input cooldown to avoid Irregular Movement
     private IEnumerator InputCooldown()
@@ -185,7 +201,7 @@ public class SnakeController : MonoBehaviour
     //Shrink by Eating Mass Burner
     public void Shrink(int Size)
     {
-        if (segments.Count > Size)
+        if (segments.Count > shrinklimit)
         {
             for (int i = 0; i < Size; i++)
             {
@@ -196,7 +212,7 @@ public class SnakeController : MonoBehaviour
         }
     }
 
-    //Each segment follows the pervious segment vice vasa
+    //Each segment follows the previous segment vice vasa
     private void HandleSegmentMovement()
     {
         for (int i = segments.Count - 1; i > 0; i--)
@@ -204,6 +220,37 @@ public class SnakeController : MonoBehaviour
             segments[i].position = segments[i - 1].position;
         }
     }
-    
 
+    public void HandleScore()
+    {
+        scoreController.incrementScore(scoreMultiplier);
+    }
+    //reset the powerUps to default
+    public void SnakeDefault()
+    {
+        scoreMultiplier = 1;
+        speedMultiplier = 1;
+        isShield = false;
+    }
+    private void SnakeDead()
+    {
+       if (!isShield)
+        Time.timeScale = 0f;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Snake"))
+        {
+            SnakeDead();
+        }
+    }
+
+    // To set players for CO-OP
+    public enum PlayerType
+    {
+        Player1,
+        Player2,
+    }
 }
+
