@@ -102,7 +102,7 @@ public class PowerUpsController : MonoBehaviour
         snakeScript.SnakeDefault();
         switch (powerUp.type)
         {
-            case PowerUpType.SpeedUp:
+            case PowerUpType.SpeedUp: 
                 snakeScript.speedMultiplier = powerUp.multiplier;
                 StartCoroutine(PowerUpDuration(() => snakeScript.speedMultiplier = 1, powerUp.duration));
                 break;
