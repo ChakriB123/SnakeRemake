@@ -83,7 +83,10 @@ public class PowerUpsController : MonoBehaviour
             ResetPowerUp();
         }
         if (collision.CompareTag("Player"))
-        { 
+        {
+            if (Audiomanager.Instance != null)
+                Audiomanager.Instance.play(SoundsEnum.PowerUp);
+
             ApplyPowerUp(currentPowerUp);
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
             gameObject.GetComponent<CircleCollider2D>().enabled = false;
@@ -102,7 +105,7 @@ public class PowerUpsController : MonoBehaviour
         snakeScript.SnakeDefault();
         switch (powerUp.type)
         {
-            case PowerUpType.SpeedUp:
+            case PowerUpType.SpeedUp: 
                 snakeScript.speedMultiplier = powerUp.multiplier;
                 StartCoroutine(PowerUpDuration(() => snakeScript.speedMultiplier = 1, powerUp.duration));
                 break;

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 using TMPro;
 public class SnakeController : MonoBehaviour
@@ -15,7 +14,7 @@ public class SnakeController : MonoBehaviour
     private bool isCooldown = false;
 
 
-    private List<Transform> segments;
+    public List<Transform> segments {  get; private set; }
     public int initialSnakeSize;
     public Transform snakeBodyPrefab;
     [SerializeField]private float shrinklimit = 3;
@@ -35,8 +34,8 @@ public class SnakeController : MonoBehaviour
     {
         SnakeDefault();
         bounds = gridArea.bounds;
-        inputCooldownTime = 0.08f;
-        gridPosition = new Vector2Int(0,0);
+        inputCooldownTime = 0.06f;
+        gridPosition = new Vector2Int((int)transform.position.x, (int)transform.position.y);
         gridMoveTimerMax = 0.1f;
         gridMoveTimer = gridMoveTimerMax;
         gridMoveDirection = new Vector2Int(1,0);
@@ -183,7 +182,8 @@ public class SnakeController : MonoBehaviour
     private IEnumerator InputCooldown()
     {
         isCooldown = true;
-        yield return new WaitForSeconds(inputCooldownTime);
+       yield return new WaitForSeconds(inputCooldownTime);
+       //yield return new WaitForEndOfFrame();
         isCooldown = false;
     }
 
@@ -242,6 +242,8 @@ public class SnakeController : MonoBehaviour
     {
         if(collision.CompareTag("Snake"))
         {
+            if(Audiomanager.Instance != null)
+            Audiomanager.Instance.play(SoundsEnum.PlayerDead);
             SnakeDead();
         }
     }

@@ -71,6 +71,9 @@ public class Food : MonoBehaviour
 
         if (collision.gameObject.GetComponent<SnakeController>() != null)
         {
+            if (Audiomanager.Instance != null)
+                Audiomanager.Instance.play(SoundsEnum.Food);
+
             SnakeController snakeController = collision.gameObject.GetComponent<SnakeController>();
             snakeController.HandleScore();
             if (food == Foodtype.FoodGainer)
