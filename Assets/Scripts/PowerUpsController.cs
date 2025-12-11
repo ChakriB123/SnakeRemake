@@ -83,7 +83,10 @@ public class PowerUpsController : MonoBehaviour
             ResetPowerUp();
         }
         if (collision.CompareTag("Player"))
-        { 
+        {
+            if (Audiomanager.Instance != null)
+                Audiomanager.Instance.play(SoundsEnum.PowerUp);
+
             ApplyPowerUp(currentPowerUp);
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
             gameObject.GetComponent<CircleCollider2D>().enabled = false;

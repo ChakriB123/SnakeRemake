@@ -242,6 +242,8 @@ public class SnakeController : MonoBehaviour
     {
         if(collision.CompareTag("Snake"))
         {
+            if(Audiomanager.Instance != null)
+            Audiomanager.Instance.play(SoundsEnum.PlayerDead);
             SnakeDead();
         }
     }

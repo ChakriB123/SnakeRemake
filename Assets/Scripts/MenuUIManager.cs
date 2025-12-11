@@ -22,25 +22,27 @@ public class MenuUIManager : MonoBehaviour
 
     private void PlaySolo()
     {
-       // SoundManager.Instance.play(SoundsEnum.ButtonClick);
+        Audiomanager.Instance.play(SoundsEnum.ButtonClick);
         SceneManager.LoadScene("Solo");
     }
     private void BacktoMenu()
     {
+        Audiomanager.Instance.play(SoundsEnum.ButtonClick);
         panelControls.SetActive(false);
     }
     private void OpenControls()
     {
+        Audiomanager.Instance.play(SoundsEnum.ButtonClick);
         panelControls.SetActive(true);
     }
     private void PlaycoOp()
     {
-        // SoundManager.Instance.play(SoundsEnum.ButtonClick);
+        Audiomanager.Instance.play(SoundsEnum.ButtonClick);
         SceneManager.LoadScene("Co-op");
     }
     public void QuitGame()
     {
-      //  SoundManager.Instance.play(SoundsEnum.ButtonClick);
+        Audiomanager.Instance.play(SoundsEnum.ButtonClick);
         Application.Quit();
     }
 }
