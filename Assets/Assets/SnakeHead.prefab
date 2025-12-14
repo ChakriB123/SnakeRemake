@@ -80,7 +80,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.33501592, g: 0.8415094, b: 0.1508365, a: 1}
+  m_Color: {r: 0.2660625, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -102,13 +102,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a547de9c26db4c64892ed08780b65a27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridArea: {fileID: 0}
-  PanelGameOver: {fileID: 0}
-  initialSnakeSize: 5
+  initialSnakeSize: 4
   snakeBodyPrefab: {fileID: 5184273262894802558, guid: 3c86e4473e46c82488f766b31a9aa004, type: 3}
-  shrinklimit: 3
-  scoreController: {fileID: 0}
-  player: 0
 --- !u!61 &6632125277102798668
 BoxCollider2D:
   m_ObjectHideFlags: 0

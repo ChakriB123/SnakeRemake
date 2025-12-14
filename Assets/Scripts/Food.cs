@@ -10,7 +10,7 @@ public class Food : MonoBehaviour
     private float time;
     public float maxTimer;
     private SpriteRenderer spriteRenderer;
-    private Foodtype food;
+    private bool isGreen;
 
 
     // According to GDD we have two types of foods (Mass Gainer,Mass Burner)
@@ -38,16 +38,19 @@ public class Food : MonoBehaviour
     }
     private void RandomizeFood()
     {
+        // colour of food determine's Food type
+        // red = mass burner
+        // green = mass gainer 
         // A 50/50 probabiliy to get either of the food types
        int chance = Random.Range(1, 100);
         if (chance >= 50)
         {
-            food = Foodtype.FoodGainer;
-            spriteRenderer.color = Color.yellow;
+            isGreen = true;
+            spriteRenderer.color = Color.green;
 
         }else
         {
-            food = Foodtype.FoodBurner;
+            isGreen = false;
             spriteRenderer.color = Color.red;
          }
         //for getting x and y boundaries of the collider
@@ -68,16 +71,12 @@ public class Food : MonoBehaviour
 
         if (collision.gameObject.GetComponent<SnakeController>() != null)
         {
-            if (Audiomanager.Instance != null)
-                Audiomanager.Instance.play(SoundsEnum.Food);
-
             SnakeController snakeController = collision.gameObject.GetComponent<SnakeController>();
-            snakeController.HandleScore();
-            if (food == Foodtype.FoodGainer)
+            if (isGreen)
             {
                 snakeController.Grow(growthSize);
             }
-            else if(food == Foodtype.FoodBurner)
+            else
             {
                 snakeController.Shrink(shrinkSize); 
             }
@@ -87,12 +86,5 @@ public class Food : MonoBehaviour
         }
 
     }
-
+   
 }
-public enum Foodtype
-{
-    None,
-    FoodGainer,
-    FoodBurner,
-}
-
