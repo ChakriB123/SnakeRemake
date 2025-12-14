@@ -238,13 +238,16 @@ public class SnakeController : MonoBehaviour
     {
         if (!isShield)
         {
-            if(player == PlayerType.Player1)
+            if (isCoop == true)
             {
-                scoreController.updatePlayerWon(PlayerType.Player2.ToString());
-            }
-            else
-            {
-                scoreController.updatePlayerWon(PlayerType.Player1.ToString());
+                if (player == PlayerType.Player1)
+                {
+                    scoreController.updatePlayerWon(PlayerType.Player2.ToString());
+                }
+                else
+                {
+                    scoreController.updatePlayerWon(PlayerType.Player1.ToString());
+                }
             }
             PanelGameOver.SetActive(true);
             Time.timeScale = 0f;
