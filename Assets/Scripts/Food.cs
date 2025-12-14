@@ -38,9 +38,6 @@ public class Food : MonoBehaviour
     }
     private void RandomizeFood()
     {
-        // colour of food determine's Food type
-        // red = mass burner
-        // green = mass gainer 
         // A 50/50 probabiliy to get either of the food types
        int chance = Random.Range(1, 100);
         if (chance >= 50)

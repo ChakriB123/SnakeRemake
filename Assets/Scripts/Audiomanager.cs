@@ -34,7 +34,7 @@ public class Audiomanager : MonoBehaviour
 
     private void Start()
     {
-        SetVolume(0.5f);
+        SetVolume(Volume);
         playMusic(SoundsEnum.Music);
     }
 

@@ -13,13 +13,14 @@ public class SnakeController : MonoBehaviour
     private Bounds bounds;
     private bool isCooldown = false;
 
-
+    public GameObject PanelGameOver;
     public List<Transform> segments {  get; private set; }
     public int initialSnakeSize;
     public Transform snakeBodyPrefab;
     [SerializeField]private float shrinklimit = 3;
 
     public ScoreController scoreController;
+    private CoopUIManager coopUIManager;
 
 
     public float speedMultiplier { get; set; }
@@ -27,6 +28,7 @@ public class SnakeController : MonoBehaviour
     public bool isShield { get; set; }
 
     [Header("CO-OP Settings")]
+    public bool isCoop;
     [SerializeField]private PlayerType player;
 
    
@@ -234,16 +236,27 @@ public class SnakeController : MonoBehaviour
     }
     private void SnakeDead()
     {
-       if (!isShield)
-        Time.timeScale = 0f;
+        if (!isShield)
+        {
+            if(player == PlayerType.Player1)
+            {
+                scoreController.updatePlayerWon(PlayerType.Player2.ToString());
+            }
+            else
+            {
+                scoreController.updatePlayerWon(PlayerType.Player1.ToString());
+            }
+            PanelGameOver.SetActive(true);
+            Time.timeScale = 0f;
+            if (Audiomanager.Instance != null)
+                Audiomanager.Instance.play(SoundsEnum.PlayerDead);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Snake"))
-        {
-            if(Audiomanager.Instance != null)
-            Audiomanager.Instance.play(SoundsEnum.PlayerDead);
+        {  
             SnakeDead();
         }
     }

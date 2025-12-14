@@ -28,7 +28,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6348224809581592085}
   - {fileID: 6406702974398219846}
@@ -78,7 +78,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 24, y: 24}
+  m_Size: {x: 34, y: 24}
   m_EdgeRadius: 0
 --- !u!1 &7732884238693380916
 GameObject:
@@ -92,6 +92,7 @@ GameObject:
   - component: {fileID: 6054545986301691992}
   - component: {fileID: 1462672551531234262}
   - component: {fileID: 4959223328036255453}
+  - component: {fileID: 1313959529403602751}
   m_Layer: 3
   m_Name: PowerUp
   m_TagString: Untagged
@@ -108,7 +109,7 @@ Transform:
   m_GameObject: {fileID: 7732884238693380916}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 2, z: 0}
+  m_LocalPosition: {x: -1.91, y: 2, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -234,6 +235,23 @@ MonoBehaviour:
     duration: 5
     multiplier: 3
     powerupColor: {r: 0, g: 0.72612643, b: 1, a: 1}
+--- !u!111 &1313959529403602751
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7732884238693380916}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 7400000, guid: 4795f9aba83209a43b1b0aa4e37eb6f4, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 4795f9aba83209a43b1b0aa4e37eb6f4, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
 --- !u!1 &7825960178513702085
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,7 +280,7 @@ Transform:
   m_GameObject: {fileID: 7825960178513702085}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 2, z: 0}
+  m_LocalPosition: {x: -4.22, y: 2, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
